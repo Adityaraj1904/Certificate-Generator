@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Certificate Generator</title>
+  <style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Georgia', serif;
+    background: linear-gradient(135deg, #ece9e6, #ffffff);
+    color: #333;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 36px;
+    color: #2d2d2d;
+    margin-bottom: 30px;
+    font-weight: bold;
+  }
+
+  input {
+    padding: 12px 20px;
+    font-size: 18px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    transition: border 0.3s;
+  }
+
+  input:focus {
+    border-color: #a3783c;
+    outline: none;
+  }
+
+  button {
+    padding: 12px 24px;
+    font-size: 18px;
+    margin: 12px 6px;
+    background-color: #c09e60;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #a3783c;
+  }
+
+  .certificate-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 30px 15px;
+  }
+
+  #certificate {
+    background: #fffefc;
+    border: 10px solid #d3b574;
+    border-radius: 18px;
+    padding: 50px 30px;
+    max-width: 800px;
+    width: 100%;
+    display: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+
+  .certificate h2 {
+    font-size: 30px;
+    color: #333;
+    margin: 20px 0;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .certificate h3 {
+    font-size: 26px;
+    color: #ad832f;
+    margin: 20px 0 10px;
+    text-transform: capitalize;
+  }
+
+  .certificate p {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #444;
+  }
+
+  .course-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #333;
+  }
+
+  .signature-section {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 60px;
+    gap: 20px;
+  }
+
+  .signature {
+    text-align: center;
+    flex: 1 1 120px;
+  }
+
+  .signature img {
+    width: 100px;
+    object-fit: contain;
+    filter: grayscale(40%);
+  }
+
+  .signature p {
+  margin-top: 10px;
+  padding-top: 5px;
+  font-weight: 500;
+  font-size: 16px;
+  border-top: 1px solid #444;
+  width: 160px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 28px;
+    }
+
+    .certificate h2 {
+      font-size: 24px;
+    }
+
+    .certificate h3 {
+      font-size: 22px;
+    }
+
+    .certificate p,
+    .course-title {
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #certificate {
+      padding: 30px 15px;
+    }
+
+    .signature img {
+      width: 80px;
+    }
+
+    .signature p {
+      font-size: 14px;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <div class="container">
+    <h1>Certificate Generator</h1>
+    <input type="text" id="nameInput" placeholder="Enter your name" />
+    <br />
+    <button onclick="generateCertificate()">Generate Certificate</button>
+    <button id="downloadBtn" style="display:none;">Download as Image</button>
+
+    <div class="certificate-wrapper">
+      <div id="certificate">
+        <h2>CERTIFICATE OF COMPLETION</h2>
+        <p>This is to certify that</p>
+        <h3 id="userName">Your Name</h3>
+        <p>has successfully completed the course</p>
+        <div class="course-title">Full Stack Web Development</div>
+        <p>Date: <span id="date"></span></p>
+
+        <div class="signature-section">
+          <div class="signature">
+            <img crossorigin="anonymous" src="instructor.png" alt="Instructor Signature">
+            <p>Instructor's Signature</p>
+          </div>
+          <div class="signature">
+            <img crossorigin="anonymous" src="director.png" alt="Director Signature">
+            <p>Director's Signature</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- html2canvas -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>
+    function formatDate(dateObj) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return dateObj.toLocaleDateString('en-US', options);
+    }
+
+    function generateCertificate() {
+      const name = document.getElementById("nameInput").value.trim();
+      const cert = document.getElementById("certificate");
+      const userName = document.getElementById("userName");
+      const date = document.getElementById("date");
+
+      if (name === "") {
+        alert("Please enter your name!");
+        return;
+      }
+
+    //   userName.textContent = name;
+    userName.textContent = name
+   .toLowerCase()
+   .split(' ')
+   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+   .join(' ');
+
+      date.textContent = formatDate(new Date());
+      cert.style.display = "block";
+      document.getElementById("downloadBtn").style.display = "inline-block";
+
+      cert.scrollIntoView({ behavior: "smooth" });
+    }
+
+    document.getElementById("downloadBtn").addEventListener("click", function () {
+      const cert = document.getElementById("certificate");
+
+      // Wait briefly for images to fully render
+      setTimeout(() => {
+        html2canvas(cert, {
+          useCORS: true,
+          scale: 2,
+          allowTaint: false,
+        }).then(canvas => {
+          const link = document.createElement("a");
+          link.download = "certificate.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+      }, 700); // Wait just enough for layout/images
+    });
+  </script>
+</body>
+</html>
